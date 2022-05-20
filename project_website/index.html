@@ -80,7 +80,7 @@
                 The game works by having players all start at the start line and whenever they hear the “Green Light” music, they can move forward, 
                 whenever this music stops, the game is in "Red Light" mode and the players must freeze. If they are caught moving
                 during the red light phase, they are out. The goal of this game is to get to the doll first and press a button on the Pi, signaling that the 
-                player has crosssed the finish line.
+                player has crosssed the finish line. Our game has a single-player and 2-player mode.
               </p>
               <p style="text-align: left;padding: 0px 30px;">
               The Raspberry Pi runs OpenCV to capture video stream from an attached PiCamera and TensorFlowLite (TFLite) process a frame to identify 17
@@ -105,7 +105,7 @@
               <li>Use OpenCV, tflite and PiCamera to detect motion for two players</li>
               <li>Use a servo motor to point a laser pointer at whoever moves</li>  
               <li>Play the Red Light Green Light song during green stages</li>
-                <li>Sync an LED strip with the proper game stage</li>
+              <li>Sync an LED strip with the proper game stage</li>
           </ul>
           </div>
       </div>
@@ -115,12 +115,70 @@
       <div style="text-align:center;">
               <h2>Design</h2>
               <p style="text-align: left;padding: 0px 30px;">
-                This project had many moving parts; we had multiple peripheral devices and 
+                This project had many moving parts; we had multiple peripheral devices and a fair amount of image processing. We will break down
+                our project design into their Hardware and Software parts.
               </p>
               <h3>High Level Overview</h3>
-
+              <p style="text-align: left;padding: 0px 30px;">
+              The novel part of this project, for us, was the pose detection and image processing. We ran a 64-bit OS (Debian) on the Pi, since
+              we could not find any OpenCV or TensorFlow packages whose models worked on a 32-bit kernel. The Raspberry Pi used OpenCV just to 
+              interface with the PiCamera and capture frame images. We also used OpenCV to display the processed image with our keypoints. We used 
+              a known model we found online (PoseNet) on TFLite to identify 17 keypoints on a person. 
+              </p>
+              <p style="text-align: left;padding: 0px 30px;">
+                Once we had a way to identify poses for a person frame by frame, we implemented game logic around it to only do our motion detection
+                in the Red Light phase. In this game logic, we also had to play sound, run the LEDs, and trigger the standard servo motor to point 
+                to the losing player. 
+              </p>
+              <p style="text-align: left;padding: 0px 30px;">
+              For the stand, we used a premade wooden coat stand we found in the corner of the room. We encourage future students of this class
+            to repurpose as much of their project as possible! We outfitted the coat stand with shelves and a hanger to mount the RPi and additional
+          accessories to create a final project that looked like a life-size doll like in Squid Game.</p>
                 <h3>Hardware</h3>
-
+                <p style="text-align: left;padding: 0px 30px;">All parts mentioned are listed and linked in the References Section. </p>
+                <h4>PiCamera</h4>
+                <p style="text-align: left;padding: 0px 30px;">
+                To capture input video stream, we used a PiCamera provided by Professor Skovira. This is made by Raspberry Pi and is very easy
+                to integrate with the Pi. Within less than an hour, we were able to take pictures with the PiCamera and save onto the Pi. The PiCam 
+                connects to the Pi via ribbon strip.</p>
+                <h4>LED Strip</h4>
+                <p style="text-align: left;padding: 0px 30px;">
+                We used a 3.2ft long WS2812B LED strip. We picked this model of LED strips because this is a really easy type of LED strip to 
+                configure. It has 3 pins: VCC, GND, and Control. The Control pin sends a PWM signal to the LED strip and allows you to configure
+                which the specific RGB color to a specific pixel. Our strip had 60 pixels. Using the Neopixel Python library, it was straightforward 
+                to control this LED strip. It requires a 5V input voltage, so we connected this to a DC voltage supply. We could have connected it to a 
+                battery just as easily, this was just easy for us during debugging, and we did not need the doll to move. </p>
+                <h4>Parallax Standard Servo Motor</h4>
+                <p style="text-align: left;padding: 0px 30px;">
+                To eliminate a player, we wanted to mount a laser onto a servo. This class gave us experience working with servo motors, and we knew from 
+                past projects that we required a standard servo, not a continous servo. That is, we wanted a motor for which we could specify a particular 
+                angle (PWM Duty cycle), and the motor would move to that angle and remain there. We used Professor Skovira's Parallax Standard Servo to achieve this.
+                We used software-defined PWM signals using the RPi.GPIO library, but in retrospect we should have used a hardware-defined PWM pin to avoid 
+                oscillatory behavior with the servo. 
+                </p>
+                <p style="text-align: left;padding: 0px 30px;">
+                When working with lasers, it's important to take precautions so as to not blind or create eye discomfort for other people. We used 
+                a weak laser pointer and angled it so that it would aim (roughly) at the neck down for our players. 
+                </p>
+                <h4>Speaker</h4>
+                <p style="text-align: left;padding: 0px 30px;">
+                To minimize our use of wires (since we had a lot), and to try something new, we opted for using a Bluetooth Speaker. This was 
+                very easy to setup on the RPi. In terminal, you can call the bluetoothctl environment and connect through terminal, or simply
+                connect to a new device by using the RPi UI and selecting the Bluetooth icon in the top right hand corner. To play sound, we ended up
+                using pygame.mixer. We also experimented with using mplayer and PulseAudio. All of these worked, 
+                we just settled on one. We downloaded our desired sound and saved it as a wav file on the SD card, then loaded this sound into the Python 
+                program using pygame.mixer.
+                </p>
+                <p style="text-align: left;padding: 0px 30px;">
+                The biggest issue with running audio was that any method of playing sound did not work when called with 'sudo'. It worked every 
+                time without the 'sudo' command, with all audio player programs mentioned above. Whether we used the audio jack or Bluetooth speaker, 
+                sound worked with out 'sudo', and never with 'sudo'. After much researching, changing access permissions, and 
+                even enabling system-wide audio, we found a source that explained that it is impossible to run audio in 'sudo'. However, neopixel needed to be run 
+                in 'sudo'. The reason for this is because they both access the same PWM pins internally, so it is impossible to grant root user permissions for audio, 
+                and impossible to not allow neopixel to access those pins. On the Raspberry Pi 4, you cannot run audio and neopixel simultaneously. We offloaded 
+                the responsibility of playing audio onto another RPi. Using a single GPIO pin between the two, RPi Main would pass information about being 
+                in the Red State Phase (INPUT==1) or not (INPUT==0). RPi2 would only play audio on INPUT high, and pause audio on INPUT low. 
+                </p>
                 <h3>Software</h3>
                 <p style="text-align: left;padding: 0px 30px;">
                   We developed the code so that the game can be played 
