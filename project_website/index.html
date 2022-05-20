@@ -75,7 +75,22 @@
 
       <div style="text-align:center;">
               <h2>Introduction</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+              <p style="text-align: left;padding: 0px 30px;">
+                For this final project, we recreated the Red Light, Green Light doll from the famous Netflix series Squid Game.
+                The game works by having players all start at the start line and whenever they hear the “Green Light” music, they can move forward, 
+                whenever this music stops, the game is in "Red Light" mode and the players must freeze. If they are caught moving
+                during the red light phase, they are out. The goal of this game is to get to the doll first and press a button on the Pi, signaling that the 
+                player has crosssed the finish line.
+              </p>
+              <p style="text-align: left;padding: 0px 30px;">
+              The Raspberry Pi runs OpenCV to capture video stream from an attached PiCamera and TensorFlowLite (TFLite) process a frame to identify 17
+              keypoints on a person to identify their pose. The Main Pi (henceforth referred to as RPiMain) controls an RGB LED strip that lights up red during the Red Phase, green during the Green phase, 
+              blinks red when a player is eliminated, and oscillates rainbow once the game has a winner. When a player is eliminated, we use the keypoints
+              from our pose detection to rotate a servo-mounted laser pointer at the losing player. 
+              We use a second Raspberry Pi (RPi2) to play sound via Bluetooth connection to a speaker during the Green
+              Light phase of the game. This is because it is impossible, due to hardware limitations in the Pi, to play sound (of any kind) while running 
+              the LED library. Audio cannot play when called with a 'sudo' command, and the LED library can only run when called with a 'sudo' command. 
+              </p>
       </div>
 
     <hr id='obj'>
@@ -98,7 +113,14 @@
 
       <div style="text-align:center;">
               <h2>Design</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+              <p style="text-align: left;padding: 0px 30px;">
+                This project had many moving parts; we had multiple peripheral devices and 
+              </p>
+              <h3>High Level Overview</h3>
+
+                <h3>Hardware</h3>
+
+                <h3>Software</h3>
       </div>
 
     <hr id='drawings'>
