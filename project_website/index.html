@@ -193,9 +193,9 @@
                   and the length of the Red Light, Green Light song to switch from being green to red,
                   and then another random number of seconds (time_r) to switch from red to green.
                 </p>
-                <div class="col-md-4" style="text-align:center;">
+                <!-- <div class="col-md-4" style="text-align:center;"> -->
                   <img class="img-rounded" src="pics/game_fsm.png" alt="FSM of the full game" width="500" height="350">
-                </div>
+                <!-- </div> -->
                 <p style="text-align: center;padding: 0px 30px;">FSM of the full game logic</p>
                 <p style="text-align: left;padding: 0px 30px;">
                 In the Green Light phase, we send a GPIO High output to the second RPi so that it can play
@@ -213,10 +213,26 @@
                 that is an instance of VideoShower, and 1 thread that is an instance of MotionDetect. All 
                 of the threads are running constantly but only take action once their input is not empty.
                 </p>
-                <div class="col-md-4" style="text-align:center;">
+                <!-- <div class="col-md-4" style="text-align:center;"> -->
                   <img class="img-rounded" src="pics/thread_flow.png" alt="Threads" width="400" height="400">
-                </div>
-
+                <p style="text-align: center;padding: 0px 30px;">Threads for one-player mode</p>
+                <!-- </div> -->
+                <p style="text-align: left;padding: 0px 30px;">
+                  The VideoGetter thread captures frames from the PiCamera using OpenCV. The frames from VideoGetter
+                  feeds into the PoseDetect threads. PoseDetect takes in a frame and runs pose detetection using a
+                  tflite PoseDetection model. The tflite model takes in the image and outputs the keypoint coordinates
+                  which are coordinates of different body parts (eyes, nose, shoulders, etc.). For 2 player-mode,
+                  the input frame is cut in half and PoseDetect2 detects for each side of the frame and places the images
+                  with the coordinates drawn on them next to each other.The PoseDetect code then uses those 
+                  coordinates to draw on the figure where the detection is and also outputs the coordinates
+                  in a list. The image showing the coordinate drawing is then sent to video show-er which displays the
+                  frame on the monitor. MotionDetect takes in 2 lists of coordinates and determines if the keypoints
+                  are different enough between frames. If they are, then it changes its did_move parameter to true and
+                  the main program sends a PWM output signal to the servo using the servo PWM value calculated from motion
+                  detector. For 2 player mode, there are 2 motion detecters which take in each players keypoints to detect
+                  motion.
+                </p>
+                
       </div>
 
     <hr id='drawings'>
@@ -266,22 +282,25 @@
       <div style="font-size:18px">
           <h2>Parts List</h2>
           <ul>
-              <li>Raspberry Pi $35.00</li>
-              <li>Raspberry Pi Camera V2 $25.00</li>
-              <a href="https://www.adafruit.com/product/1463"><li>NeoPixel Ring - $9.95</li></a>
-              <li>LEDs, Resistors and Wires - Provided in lab</li>
+              <li>Raspberry Pi - Provided in lab</li>
+              <li>Raspberry Pi Camera V2 - Provided in lab/li>
+              <a href="https://www.amazon.com/dp/B01MG49QKD?ref=ppx_pop_mob_ap_share&th=1"><li>Alitove 60 Pixels LED Strip- $9.99</li></a>
+              <a href="https://www.amazon.com/dp/B09PRFDG1L?ref=ppx_pop_mob_ap_share"><li>Cat Laser Pointer- $7.99</li></a>
+              <li>LEDs, Resistors, Servo and Wires - Provided in lab</li>
           </ul>
-          <h3>Total: $69.95</h3>
+          <h3>Total: $17.98</h3>
       </div>
       <hr>
       <div style="font-size:18px">
           <h2>References</h2>
           <a href="https://picamera.readthedocs.io/">PiCamera Document</a><br>
-          <a href="http://www.micropik.com/PDF/SG90Servo.pdf">Tower Pro Servo Datasheet</a><br>
-          <a href="http://getbootstrap.com/">Bootstrap</a><br>
-          <a href="http://abyz.co.uk/rpi/pigpio/">Pigpio Library</a><br>
+          <a href="https://www.parallax.com/product/parallax-standard-servo/f">Parallax Standard Servo Datasheet</a><br>
+          <a href="https://learn.adafruit.com/neopixels-on-raspberry-pi">Adafruit NeoPixel Library</a><br>
+          <a href="https://medium.com/analytics-vidhya/pose-estimation-on-the-raspberry-pi-4-83a02164eb8e">Pose Estimation Blog + Code</a><br>
+          <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview">TFLite Pose Estimation Model</a><br>
+          <a href="http://getbootstrap.com/">Bootstrap for this website</a><br>
           <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Document</a><br>
-
+          
       </div>
 
     <hr>
