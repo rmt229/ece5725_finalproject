@@ -235,13 +235,6 @@
                 
       </div>
 
-    <hr id='drawings'>
-
-      <div style="text-align:center;">
-              <h2>Drawings</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
-      </div>
-
     <hr id='testing'>
 
       <div style="text-align:center;">
@@ -273,14 +266,21 @@
               called servo.py. This took a lot of testing; the servo did not originally work. We used the familiar method of PWM signal 
               generation: defining a PWM pin using the RPi.GPIO library. This did not work. We tried sending values between 0 and 100 to the 
               pwm.ChangeDutyCycle() function, but it would only ever move in one direction - clockwise until it hit the end of its range. 
-              It seemed that random values would trigger this. Eventually we 1) replaced this servo motor, and 2) checked the datasheet to confirm 
+              It seemed that random values would trigger this. To test this, 
+              we connected an oscilloscope to the PWM pin to make sure we were generating a sensible PWM waveform. Thanks to this, we 
+              were able to determine that our code was set up well, but we needed to switch to a different servo. Eventually we 1) 
+              replaced this servo motor, and 2) checked the datasheet to confirm 
               what range of PWM values the motor accepts. It turns out that, at 50Hz (T=20ms), 0 to 1800 degrees maps to 2.75 to 11.25 
               duty cycle range for the servo motor. See the datasheet for information on how this was determined. 
               </p>
               <h4>Pose Detection</h4>
               <p style="text-align: left;padding: 0px 30px;">
               We followed an example of single-person pose detection using PoseNet on TFLite on a Raspberry Pi 4 (linked <a href="https://github.com/ecd1012/rpi_pose_estimation">here</a>)
-              
+              To test this we would have one person run the code, analyzing the keypoints that got printed to terminal, and another person 
+              model different poses at varying distances. In order to make debugging easier, and for better demo purposes, we added a way 
+              to display the posed image to the monitor so that we could see the real-time stream of key points being detected. This was our 
+              lengthiest program so far, so once we were confident this worked for single-person pose detection, we began adding game logic around 
+              this code, integrating the previous parts we had tested. 
               </p>
               <h3>Calibration</h3>
               <h4>Standard Servo</h4>
@@ -288,12 +288,26 @@
               we needed a way to center the laser pointer at the beginning, and we didn't need the full 180 degree range of the servo. 
               To calibrate this, we wrote a calibration script where we specified PWM values for the center, leftmost, and rightmost 
               points. The range of the servo needed to be about the same as what what PiCamera could see.  </p>
+              <h4>Motion Detection Sensitivity</h4>
+              <p style="text-align: left;padding: 0px 30px;">
+              The motion detection logic to determine when a player has moved, and is therefore eliminated, was determined by analyzing 
+              two pose images, 500ms apart, during the Red Light phase. If there was a change in keypoints, this meant the player had moved. 
+              However, by nature of the model we were using, noise of the camera, and general human movement (like hair or eyes), 
+              we couldn't use absolute difference. We also did not need to use all 17 keypoints, which were: 
+              nose, left eye, right eye, left ear, right ear, left shoulder, right shoulder, left elbow, right elbow, 
+              left wrist, right wrist, left hip, right hip, left knee, right knee, left ankle, right ankle. 
+              <a href="https://www.tensorflow.org/lite/examples/pose_estimation/overview">Source</a><br>
+              Through trial and error, we changed our sensitivity threshold to allow for subtle movements of shoulders, elbows, hips, wrist, and ankles. 
+              We also realized that we didn't need data for parts of the face that moved, since that was a little finicky to process and almost 
+              always yielded that the person had moved. The model, that is, the weights file, was derived from training detection of these points, however, 
+              so we couldn't save computation time by not calculating those points. We simply ignored them for determining if a person had moved. 
+              </p>
       </div>
 
     <hr id='result'>
 
       <div style="text-align:center;">
-              <h2>Result</h2>
+              <h2>Results</h2>
               <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
       </div>
 
