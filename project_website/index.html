@@ -97,7 +97,7 @@
 
       <div class="row">
           <div class="col-md-4" style="text-align:center;">
-          <img class="img-rounded" src="pics/Squid_game_doll.png" alt="Doll robot setup next to doll in Squid Game" width="240" height="240">
+          <img class="img-rounded" src="pics/Squid_game_doll.png" alt="Doll robot setup next to doll in Squid Game" width="400" height="400">
           </div>
           <div class="col-md-8" style="font-size:18px;">
           <h2>Project Objective:</h2>
@@ -182,6 +182,43 @@
                 in the Red State Phase (INPUT==1) or not (INPUT==0). RPi2 would only play audio on INPUT high, and pause audio on INPUT low. 
                 </p>
                 <h3>Software</h3>
+                <p style="text-align: left;padding: 0px 30px;">
+                  We developed the code so that the game can be played 
+                  in 2 player mode or single player mode by making it a command-line argument.
+                  Since OpenCV and tflite are heavy applications, as well as video streaming,
+                  we made use of multi-threading to make our application run faster.
+                </p>
+                <p style="text-align: left;padding: 0px 30px;">
+                  We created multiple game states: red, green, loser, winner. As shown 
+                  in the project.py in the Code Appendix we have a while loop that plays the game
+                  unless someone has lost or won. It chooses a random number (time_g) of seconds between 1
+                  and the length of the Red Light, Green Light song to switch from being green to red,
+                  and then another random number of seconds (time_r) to switch from red to green.
+                </p>
+                <div class="col-md-4" style="text-align:center;">
+                  <img class="img-rounded" src="pics/game_fsm.png" alt="FSM of the full game" width="500" height="350">
+                </div>
+                <p style="text-align: center;padding: 0px 30px;">FSM of the full game logic</p>
+                <p style="text-align: left;padding: 0px 30px;">
+                In the Green Light phase, we send a GPIO High output to the second RPi so that it can play
+                the sound. In the Red Light phase, we initiate the Pi Camera frame fetching,
+                pose detection, and motion detection. During both states if a player presses
+                GPIO button 27, then they win and the game is over. To detect the button press,
+                we use a callback function so that at any point in the program if a button press
+                is detected the game can go to the winner state. During the winner state, the LEDs display 
+                a rainbow pattern and then the program quits. The loser state happens only from 
+                the red light stage if someone is detected moving. 
+                </p>
+                <p style="text-align: left;padding: 0px 30px;">
+                For motion detection, we use multiple threads. We instatiate one thread that is an instance
+                of VideoGetter, 2 threads that are instances of PoseDetect (or PoseDetect2 for 2 player), 1 thread
+                that is an instance of VideoShower, and 1 thread that is an instance of MotionDetect. All 
+                of the threads are running constantly but only take action once their input is not empty.
+                </p>
+                <div class="col-md-4" style="text-align:center;">
+                  <img class="img-rounded" src="pics/thread_flow.png" alt="Threads" width="400" height="400">
+                </div>
+
       </div>
 
     <hr id='drawings'>
