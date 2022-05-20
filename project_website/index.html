@@ -136,11 +136,13 @@
           accessories to create a final project that looked like a life-size doll like in Squid Game.</p>
                 <h3>Hardware</h3>
                 <p style="text-align: left;padding: 0px 30px;">All parts mentioned are listed and linked in the References Section. </p>
+                <img class="img-rounded" src="pics/HW-closeup.png" alt="hw HW-closeup" width="240" height="240">
                 <h4>PiCamera</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 To capture input video stream, we used a PiCamera provided by Professor Skovira. This is made by Raspberry Pi and is very easy
                 to integrate with the Pi. Within less than an hour, we were able to take pictures with the PiCamera and save onto the Pi. The PiCam 
                 connects to the Pi via ribbon strip.</p>
+                <img class="img-rounded" src="pics/HW-picam.png" alt="hw-picam" width="240" height="240">
                 <h4>LED Strip</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 We used a 3.2ft long WS2812B LED strip. We picked this model of LED strips because this is a really easy type of LED strip to 
@@ -148,6 +150,7 @@
                 which the specific RGB color to a specific pixel. Our strip had 60 pixels. Using the Neopixel Python library, it was straightforward 
                 to control this LED strip. It requires a 5V input voltage, so we connected this to a DC voltage supply. We could have connected it to a 
                 battery just as easily, this was just easy for us during debugging, and we did not need the doll to move. </p>
+                <img class="img-rounded" src="pics/HW-voltageconnections.png" alt="hw-voltage" width="240" height="240">
                 <h4>Parallax Standard Servo Motor</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 To eliminate a player, we wanted to mount a laser onto a servo. This class gave us experience working with servo motors, and we knew from 
@@ -160,6 +163,7 @@
                 When working with lasers, it's important to take precautions so as to not blind or create eye discomfort for other people. We used 
                 a weak laser pointer and angled it so that it would aim (roughly) at the neck down for our players. 
                 </p>
+                <img class="img-rounded" src="pics/HW-servolaser.png" alt="hw servo" width="240" height="240">
                 <h4>Speaker</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 To minimize our use of wires (since we had a lot), and to try something new, we opted for using a Bluetooth Speaker. This was 
@@ -169,6 +173,7 @@
                 we just settled on one. We downloaded our desired sound and saved it as a wav file on the SD card, then loaded this sound into the Python 
                 program using pygame.mixer.
                 </p>
+                <img class="img-rounded" src="pics/HW-wholesetup.png" alt="HW-wholesetup" width="240" height="240">
                 <p style="text-align: left;padding: 0px 30px;">
                 The biggest issue with running audio was that any method of playing sound did not work when called with 'sudo'. It worked every 
                 time without the 'sudo' command, with all audio player programs mentioned above. Whether we used the audio jack or Bluetooth speaker, 
