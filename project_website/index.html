@@ -141,7 +141,7 @@
                 To capture input video stream, we used a PiCamera provided by Professor Skovira. This is made by Raspberry Pi and is very easy
                 to integrate with the Pi. Within less than an hour, we were able to take pictures with the PiCamera and save onto the Pi. The PiCam 
                 connects to the Pi via ribbon strip.</p>
-                <img class="img-rounded" src="pics/HW-picam.HEIC" alt="hw-picam" width="240" height="240">
+                <img class="img-rounded" src="pics/HW-picam.png" alt="hw-picam" width="320" height="320">
                 <h4>LED Strip</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 We used a 3.2ft long WS2812B LED strip. We picked this model of LED strips because this is a really easy type of LED strip to 
@@ -161,7 +161,7 @@
                 When working with lasers, it's important to take precautions so as to not blind or create eye discomfort for other people. We used 
                 a weak laser pointer and angled it so that it would aim (roughly) at the neck down for our players. 
                 </p>
-                <img class="img-rounded" src="pics/HW-servolaser.HEIC" alt="hw-servolaser" width="240" height="240">
+                <img class="img-rounded" src="pics/HW-servolaser.png" alt="hw-servolaser" width="320" height="240">
                 <h4>Speaker</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 To minimize our use of wires (since we had a lot), and to try something new, we opted for using a Bluetooth Speaker. This was 
@@ -232,7 +232,48 @@
 
       <div style="text-align:center;">
               <h2>Testing</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+              <p style="text-align: left;padding: 0px 30px;">
+              This was a very modular project, which lent itself well to incremental testing. Each part required functional 
+              testing to make sure that we had established connections properly or were generating the right signal, plus 
+              additional calibration testing to ensure the gaming experience was smooth.
+              </p>
+              <h3>Ensuring Parts Worked</h3>
+              <h4>PiCamera and OpenCV</h4>
+              <p style="text-align: left;padding: 0px 30px;">
+              The first thing we started testing was the PiCamera. Following the references from the Canvas page, plus 
+              some online documentation, we were able to capture a picture upon startup of our python program. We got to installing 
+              OpenCV (originally on a 32-bit OS), and we ran into various hurdles doing so. It was difficult to find a version of OpenCV 
+              that worked - we had to install many versions of other libraries to make it finally work. When we switched to a 64-bit OS, 
+              the installation process was a lot simpler. We tested this by importing cv2 in Python in a test script and capturing video stream 
+              and taking pictures. We tested resizing features and played around with the resolutution and FPS parameters to settle on 
+              one that looked real-time to the human eye, and gave us a crisp enough image that it could capture a person from over a meter 
+              away. </p>
+              <h4>PWM Peripheral Devices: LEDs and Servo</h4>
+              <p style="text-align: left;padding: 0px 30px;">
+              The LEDs were controlled with a python library called neopixel. Following some documentation online, we were able to customize 
+              the color and timing of the LEDs pretty simply. We had a separate Python file called LED.py that solely tested the LED functionality.
+              The rainbow behavior seen during the Winner stage of the game was also tested in this script. 
+              </p>
+              <p style="text-align: left;padding: 0px 30px;"> 
+              The second PWM-controlled device in our project was the standard servo. We wrote another test script for this in Python 
+              called servo.py. This took a lot of testing; the servo did not originally work. We used the familiar method of PWM signal 
+              generation: defining a PWM pin using the RPi.GPIO library. This did not work. We tried sending values between 0 and 100 to the 
+              pwm.ChangeDutyCycle() function, but it would only ever move in one direction - clockwise until it hit the end of its range. 
+              It seemed that random values would trigger this. Eventually we 1) replaced this servo motor, and 2) checked the datasheet to confirm 
+              what range of PWM values the motor accepts. It turns out that, at 50Hz (T=20ms), 0 to 1800 degrees maps to 2.75 to 11.25 
+              duty cycle range for the servo motor. See the datasheet for information on how this was determined. 
+              </p>
+              <h4>Pose Detection</h4>
+              <p style="text-align: left;padding: 0px 30px;">
+              We followed an example of single-person pose detection using PoseNet on TFLite on a Raspberry Pi 4 (linked <a href="https://github.com/ecd1012/rpi_pose_estimation">here</a>)
+              
+              </p>
+              <h3>Calibration</h3>
+              <h4>Standard Servo</h4>
+              <p style="text-align: left;padding: 0px 30px;">Since we were mapping the position of the laser based on keypoints of a person, 
+              we needed a way to center the laser pointer at the beginning, and we didn't need the full 180 degree range of the servo. 
+              To calibrate this, we wrote a calibration script where we specified PWM values for the center, leftmost, and rightmost 
+              points. The range of the servo needed to be about the same as what what PiCamera could see.  </p>
       </div>
 
     <hr id='result'>
