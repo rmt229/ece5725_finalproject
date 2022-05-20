@@ -186,6 +186,7 @@
                   Since OpenCV and tflite are heavy applications, as well as video streaming,
                   we made use of multi-threading to make our application run faster.
                 </p>
+                <h4>Game Logic</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                   We created multiple game states: red, green, loser, winner. As shown 
                   in the project.py in the Code Appendix we have a while loop that plays the game
@@ -201,12 +202,11 @@
                 In the Green Light phase, we send a GPIO High output to the second RPi so that it can play
                 the sound. In the Red Light phase, we initiate the Pi Camera frame fetching,
                 pose detection, and motion detection. During both states if a player presses
-                GPIO button 27, then they win and the game is over. To detect the button press,
-                we use a callback function so that at any point in the program if a button press
-                is detected the game can go to the winner state. During the winner state, the LEDs display 
+                GPIO button 27, then they win and the game is over.  During the winner state, the LEDs display 
                 a rainbow pattern and then the program quits. The loser state happens only from 
                 the red light stage if someone is detected moving. 
                 </p>
+                <h4>Motion Detection</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 For motion detection, we use multiple threads. We instatiate one thread that is an instance
                 of VideoGetter, 2 threads that are instances of PoseDetect (or PoseDetect2 for 2 player), 1 thread
@@ -232,7 +232,14 @@
                   detector. For 2 player mode, there are 2 motion detecters which take in each players keypoints to detect
                   motion.
                 </p>
-                
+                <h4>Embedded Interfaces</h4>
+                <p style="text-align: left;padding: 0px 30px;">
+                To detect the winning button press,
+                we used a callback function so that at any point in the program if a button press
+                is detected the game can go to the winner state. To control the LED light strip, we used the Adafruit NeoPixel library
+                in which all we had to write was the RGB value to show on the pixels. To control the servo, we used software defined PWM from 
+                the RPi.GPIO library. We also used the GPIO library to output a high signal to the second RPi.
+              </p>
       </div>
 
     <hr id='testing'>
