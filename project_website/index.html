@@ -186,7 +186,6 @@
                   Since OpenCV and tflite are heavy applications, as well as video streaming,
                   we made use of multi-threading to make our application run faster.
                 </p>
-                <h4>Game Logic</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                   We created multiple game states: red, green, loser, winner. As shown 
                   in the project.py in the Code Appendix we have a while loop that plays the game
@@ -202,11 +201,12 @@
                 In the Green Light phase, we send a GPIO High output to the second RPi so that it can play
                 the sound. In the Red Light phase, we initiate the Pi Camera frame fetching,
                 pose detection, and motion detection. During both states if a player presses
-                GPIO button 27, then they win and the game is over.  During the winner state, the LEDs display 
+                GPIO button 27, then they win and the game is over. To detect the button press,
+                we use a callback function so that at any point in the program if a button press
+                is detected the game can go to the winner state. During the winner state, the LEDs display 
                 a rainbow pattern and then the program quits. The loser state happens only from 
                 the red light stage if someone is detected moving. 
                 </p>
-                <h4>Motion Detection</h4>
                 <p style="text-align: left;padding: 0px 30px;">
                 For motion detection, we use multiple threads. We instatiate one thread that is an instance
                 of VideoGetter, 2 threads that are instances of PoseDetect (or PoseDetect2 for 2 player), 1 thread
@@ -232,14 +232,7 @@
                   detector. For 2 player mode, there are 2 motion detecters which take in each players keypoints to detect
                   motion.
                 </p>
-                <h4>Embedded Interfaces</h4>
-                <p style="text-align: left;padding: 0px 30px;">
-                To detect the winning button press,
-                we used a callback function so that at any point in the program if a button press
-                is detected the game can go to the winner state. To control the LED light strip, we used the Adafruit NeoPixel library
-                in which all we had to write was the RGB value to show on the pixels. To control the servo, we used software defined PWM from 
-                the RPi.GPIO library. We also used the GPIO library to output a high signal to the second RPi.
-              </p>
+                
       </div>
 
     <hr id='testing'>
@@ -279,6 +272,18 @@
               replaced this servo motor, and 2) checked the datasheet to confirm 
               what range of PWM values the motor accepts. It turns out that, at 50Hz (T=20ms), 0 to 1800 degrees maps to 2.75 to 11.25 
               duty cycle range for the servo motor. See the datasheet for information on how this was determined. 
+              </p>
+              <h4>Sound</h4>
+              <p style="text-align: left;padding: 0px 30px;">
+              This required a fair amount of testing due to the 'sudo' incident. We wrote a playsong.py script that was just responsible for playing
+              sound. We alternated between using pygame.mixer, calling mplayer through an os command in python, calling mplayer through a FIFO command, 
+              and just running audio through terminal using these commands. We tried all kinds of combinations to get sound to work, and finally settled on
+              using a second Pi. <br>
+              Once we realized that sound could reliably work with any method, we changed playsong.py to play sound based on an input from RPi Main. 
+              We configured a GPIO input pin and set the program to play the song when the pin was held HIGH, and stop when it was LOW. We first tested 
+              this with a voltage supply to manually set the pin HIGH or LOW. Once we were confident the program logic worked, we made the hardware connection 
+              between RPi Main and RPi 2, connecting an oscilloscope on the output pin of RPi Main to make sure we were sending the correct signal. 
+              We were now able to play and stop sound on demand, and we integrated this into our main program: project.py. 
               </p>
               <h4>Pose Detection</h4>
               <p style="text-align: left;padding: 0px 30px;">
